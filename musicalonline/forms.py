@@ -12,3 +12,4 @@ class LoginForm(Form):
     email = StringField("Email", validators=[InputRequired(), Email()])
     password = PasswordField("Password", validators=[InputRequired(), Length(min=6,max=20)])
     remember = BooleanField('Remember Me')
+    button  = SubmitField("Submit")
