@@ -2,7 +2,7 @@ from musicalonline import app, db
 from musicalonline.forms import RegisterForm, LoginForm
 from musicalonline.models import User
 from flask import render_template, request, redirect, url_for
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, current_user
 
 
 @app.route("/")
@@ -11,6 +11,8 @@ def index():
 
 @app.route("/register", methods=["GET","POST"])
 def register():
+    if current_user.is_authenticated:
+        return redirect(url_for("index"))
     form = RegisterForm(request.form)
     if form.validate():
         user = User(username=form.username.data, email=form.email.data,password=form.password.data,isadmin=0)
@@ -23,6 +25,8 @@ def register():
 
 @app.route("/login", methods=["GET","POST"])
 def login():
+    if current_user.is_authenticated:
+        return redirect(url_for("index"))
     form = LoginForm(request.form)
     if form.validate():
         user = User.query.filter_by(email=form.email.data).first()
