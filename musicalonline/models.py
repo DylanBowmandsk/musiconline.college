@@ -17,11 +17,20 @@ class User(db.Model, UserMixin):
 
 class Album(db.Model):
     album_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     name = db.Column(db.String(80) , unique=False, nullable=False)
     release = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Float, nullable=False)
     image = db.Column(db.String(200), nullable=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
+    tracks = db.relationship("Track", backref="album", lazy=True)
+
+class Track(db.Model):
+    track_id = db.Column(db.Integer, primary_key=True)
+    album_id = db.Column(db.Integer, db.ForeignKey("album.album_id"), nullable=False)
+    name = db.Column(db.String(80), unique=True, nullable=False)
+    length = db.Column(db.Integer, nullable=False)
+
+
 
 
 
