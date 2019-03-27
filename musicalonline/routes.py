@@ -41,3 +41,7 @@ def logout():
     logout_user()
     print("logged out")
     return redirect(url_for("index"))
+
+@app.route("/buy")
+def buy():
+    return render_template("buy.html")

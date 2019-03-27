@@ -5,6 +5,7 @@
     <body>
         <ul>
             <li><a href="{{url_for('index')}}">Index</a></li>
+            <li><a href="{{url_for('buy')}}">Buy</a></li>
             {% if current_user.is_authenticated %}
                 <li><a href="{{url_for('logout')}}">Logout</a></li>
                 {{current_user.username}}
