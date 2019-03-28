@@ -1,3 +1,10 @@
 {% extends "layout.html" %}
 {% block content %}
+    {% for album in albums %}
+        <div>
+            <h1>{{album.name}}</h1>
+            <p>{{album.release}}</p>
+            <p>£{{album.price}}</p>
+        </div>
+    {% endfor %}
 {% endblock %}

@@ -1,6 +1,6 @@
 from musicalonline import app, db
 from musicalonline.forms import RegisterForm, LoginForm
-from musicalonline.models import User
+from musicalonline.models import User , Album
 from flask import render_template, request, redirect, url_for
 from flask_login import login_user, logout_user, current_user
 
@@ -44,4 +44,5 @@ def logout():
 
 @app.route("/buy")
 def buy():
-    return render_template("buy.html")
+    albums = Album.query.all()
+    return render_template("buy.html", albums=albums)
