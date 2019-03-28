@@ -33,7 +33,7 @@ def login():
         if user is not None:
             login_user(user, remember=form.remember.data)
             print("user " + user.username + " logged in")
-            redirect(url_for("index"))
+            return redirect(url_for("index"))
     return render_template("login.html",form=form)
 
 @app.route("/logout")
