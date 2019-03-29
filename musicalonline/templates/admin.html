@@ -1,5 +1,8 @@
 {% for album in albums %}
     <div>
         <p>{{album.name}}</p>
+        <p>{{album.release}}</p>
+        <p>£{{album.price}}</p>
+        <button><a href="{{url_for('admin_edit',id=album.album_id)}}">Edit</a></button>
     </div>
 {% endfor %}

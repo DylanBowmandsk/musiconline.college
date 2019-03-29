@@ -60,7 +60,12 @@ def adminlogin():
         print("invalid")
     return render_template("adminlogin.html",form=form)
 
-@app.route("/admin")
+@app.route("/admin",methods=["GET"])
 def admin():
     albums = Album.query.all()
     return render_template("admin.html", albums=albums)
+
+@app.route("/edit/<int:id>")
+def admin_edit(id):
+    album = Album.query.filter_by(album_id=id).first()
+    return render_template("admin_edit.html",album=album)
