@@ -2,7 +2,7 @@ from musicalonline import app, db
 from musicalonline.forms import RegisterForm, LoginForm, AdminLoginForm, AdminAddRecordForm
 from musicalonline.models import User , Album
 from flask import render_template, request, redirect, url_for
-from flask_login import login_user, logout_user, current_user
+from flask_login import login_user, logout_user, current_user, login_required
 
 
 @app.route("/")
@@ -53,6 +53,7 @@ def adminlogin():
     if form.validate():
         user = User.query.filter_by(username=form.username.data).first()
         if user is not None and user.isadmin == 1 and user.password == form.password.data:
+            login_user(user)
             return redirect(url_for("admin"))
         else:
             print("invalid")
@@ -61,16 +62,25 @@ def adminlogin():
     return render_template("adminlogin.html",form=form)
 
 @app.route("/admin",methods=["GET"])
+@login_required
 def admin():
+    if current_user.isadmin == 0:
+        return redirect(url_for('index'))
     albums = Album.query.all()
     return render_template("admin.html", albums=albums)
 
 @app.route("/admin/edit/<int:id>")
+@login_required
 def admin_edit(id):
+    if current_user.isadmin == 0:
+        return redirect(url_for('index'))
     album = Album.query.filter_by(album_id=id).first()
     return render_template("admin_edit.html",album=album)
 
 @app.route("/admin/add")
+@login_required
 def admin_add():
+    if current_user.isadmin == 0:
+        return redirect(url_for('index'))
     form = AdminAddRecordForm()
     return render_template("admin_add.html",form=form)
