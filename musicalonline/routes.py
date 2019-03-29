@@ -1,5 +1,5 @@
 from musicalonline import app, db
-from musicalonline.forms import RegisterForm, LoginForm
+from musicalonline.forms import RegisterForm, LoginForm, AdminLoginForm
 from musicalonline.models import User , Album
 from flask import render_template, request, redirect, url_for
 from flask_login import login_user, logout_user, current_user
@@ -30,7 +30,7 @@ def login():
     form = LoginForm(request.form)
     if form.validate():
         user = User.query.filter_by(email=form.email.data).first()
-        if user is not None:
+        if user is not None and user.password == form.password.data:
             login_user(user, remember=form.remember.data)
             print("user " + user.username + " logged in")
             return redirect(url_for("index"))
@@ -46,3 +46,18 @@ def logout():
 def buy():
     albums = Album.query.all()
     return render_template("buy.html", albums=albums)
+
+@app.route("/adminlogin",methods=["GET","POST"])
+def adminlogin():
+    form = AdminLoginForm(request.form)
+    if form.validate():
+        user = User.query.filter_by(username=form.username.data).first()
+        if user is not None and user.isadmin == 1 and user.password == form.password.data:
+            return redirect(url_for("admin"))
+    else:
+        print("invalid")
+    return render_template("adminlogin.html",form=form)
+
+@app.route("/admin")
+def admin():
+    return render_template("admin.html")
