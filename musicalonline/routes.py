@@ -54,10 +54,13 @@ def adminlogin():
         user = User.query.filter_by(username=form.username.data).first()
         if user is not None and user.isadmin == 1 and user.password == form.password.data:
             return redirect(url_for("admin"))
+        else:
+            print("invalid")
     else:
         print("invalid")
     return render_template("adminlogin.html",form=form)
 
 @app.route("/admin")
 def admin():
-    return render_template("admin.html")
+    albums = Album.query.all()
+    return render_template("admin.html", albums=albums)
