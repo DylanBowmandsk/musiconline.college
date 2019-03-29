@@ -1,4 +1,4 @@
-from wtforms import Form , StringField, SubmitField , PasswordField, BooleanField
+from wtforms import Form , StringField, SubmitField , PasswordField, BooleanField,IntegerField, DecimalField
 from wtforms.validators import InputRequired, Length, Email , EqualTo
 
 class RegisterForm(Form):
@@ -18,3 +18,9 @@ class AdminLoginForm(Form):
     username = StringField("Username", validators=[InputRequired(),Length(min=4,max=20)])
     password = PasswordField("Password", validators=[InputRequired(), Length(min=6,max=20)])
     button  = SubmitField("Submit")
+
+class AdminAddRecordForm(Form):
+    name = StringField("Album Name", validators=[InputRequired()])
+    release = IntegerField("Release", validators=[InputRequired()])
+    price  = DecimalField("Price", validators=[InputRequired()])
+    button = SubmitField("Submit")

@@ -1,5 +1,5 @@
 from musicalonline import app, db
-from musicalonline.forms import RegisterForm, LoginForm, AdminLoginForm
+from musicalonline.forms import RegisterForm, LoginForm, AdminLoginForm, AdminAddRecordForm
 from musicalonline.models import User , Album
 from flask import render_template, request, redirect, url_for
 from flask_login import login_user, logout_user, current_user
@@ -65,7 +65,12 @@ def admin():
     albums = Album.query.all()
     return render_template("admin.html", albums=albums)
 
-@app.route("/edit/<int:id>")
+@app.route("/admin/edit/<int:id>")
 def admin_edit(id):
     album = Album.query.filter_by(album_id=id).first()
     return render_template("admin_edit.html",album=album)
+
+@app.route("/admin/add")
+def admin_add():
+    form = AdminAddRecordForm()
+    return render_template("admin_add.html",form=form)
