@@ -1,5 +1,5 @@
 from musicalonline import app, db
-from musicalonline.forms import RegisterForm, LoginForm, AdminLoginForm, AdminAddRecordForm
+from musicalonline.forms import RegisterForm, LoginForm, AdminLoginForm, AdminRecordForm
 from musicalonline.models import User , Album
 from flask import render_template, request, redirect, url_for
 from flask_login import login_user, logout_user, current_user, login_required
@@ -69,13 +69,19 @@ def admin():
     albums = Album.query.all()
     return render_template("admin.html", albums=albums)
 
-@app.route("/admin/edit/<int:id>")
+@app.route("/admin/edit/<int:id>",methods=["GET","POST"])
 @login_required
 def admin_edit(id):
     if current_user.isadmin == 0:
         return redirect(url_for('index'))
+    form = AdminRecordForm(request.form)
     album = Album.query.filter_by(album_id=id).first()
-    return render_template("admin_edit.html",album=album)
+    if form.validate() and album is not None:
+        album.name = form.name.data
+        album.release = form.release.data
+        album.price = form.price.data
+        db.session.commit()
+    return render_template("admin_edit.html",album=album, form=form)
 
 @app.route("/admin/delete/<int:id>")
 @login_required
@@ -91,7 +97,7 @@ def admin_delete(id):
 def admin_add():
     if current_user.isadmin == 0:
         return redirect(url_for('index'))
-    form = AdminAddRecordForm(request.form)
+    form = AdminRecordForm(request.form)
     if form.validate():
         album = Album(user_id=current_user.id,name=form.name.data,release=form.release.data,price=form.price.data)
         db.session.add(album)
