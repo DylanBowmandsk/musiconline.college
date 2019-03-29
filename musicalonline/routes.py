@@ -77,10 +77,14 @@ def admin_edit(id):
     album = Album.query.filter_by(album_id=id).first()
     return render_template("admin_edit.html",album=album)
 
-@app.route("/admin/add")
+@app.route("/admin/add",methods=["GET","POST"])
 @login_required
 def admin_add():
     if current_user.isadmin == 0:
         return redirect(url_for('index'))
-    form = AdminAddRecordForm()
+    form = AdminAddRecordForm(request.form)
+    if form.validate():
+        album = Album(user_id=current_user.id,name=form.name.data,release=form.release.data,price=form.price.data)
+        db.session.add(album)
+        db.session.commit()
     return render_template("admin_add.html",form=form)
