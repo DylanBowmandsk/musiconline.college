@@ -77,6 +77,15 @@ def admin_edit(id):
     album = Album.query.filter_by(album_id=id).first()
     return render_template("admin_edit.html",album=album)
 
+@app.route("/admin/delete/<int:id>")
+@login_required
+def admin_delete(id):
+    if current_user.isadmin == 0:
+        return redirect(url_for('index'))
+    Album.query.filter_by(album_id=id).delete()
+    db.session.commit()
+    return redirect(url_for("admin"))
+
 @app.route("/admin/add",methods=["GET","POST"])
 @login_required
 def admin_add():
@@ -88,3 +97,5 @@ def admin_add():
         db.session.add(album)
         db.session.commit()
     return render_template("admin_add.html",form=form)
+
+

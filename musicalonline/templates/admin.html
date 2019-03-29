@@ -9,5 +9,6 @@
         <p>Price: £{{album.price}}</p>
         <p>User ID: {{album.author.id}}</p>
         <button><a href="{{url_for('admin_edit',id=album.album_id)}}">Edit</a></button>
+        <button><a href="{{url_for('admin_delete',id=album.album_id)}}">Delete</a></button>
     </div>
 {% endfor %}
