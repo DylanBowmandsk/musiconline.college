@@ -1,0 +1,12 @@
+{% extends "layout.html" %}
+{% block content %}
+<form method="POST">
+    {{form.name.label}}
+    {{form.name}}
+    {{form.release.label}}
+    {{form.release}}
+    {{form.price.label}}
+    {{form.price}}
+    {{form.button}}
+</form>
+{% endblock %}

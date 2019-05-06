@@ -14,6 +14,12 @@ class LoginForm(Form):
     remember = BooleanField('Remember Me')
     button  = SubmitField("Submit")
 
+class RecordForm(Form):
+    name = StringField("Album Name", validators=[InputRequired()])
+    release = IntegerField("Release", validators=[InputRequired()])
+    price  = DecimalField("Price", validators=[InputRequired()])
+    button = SubmitField("Submit")
+
 class AdminLoginForm(Form):
     username = StringField("Username", validators=[InputRequired(),Length(min=4,max=20)])
     password = PasswordField("Password", validators=[InputRequired(), Length(min=6,max=20)])

@@ -5,6 +5,10 @@
             <h1>{{album.name}}</h1>
             <p>{{album.release}}</p>
             <p>£{{album.price}}</p>
+            {% if current_user.id == album.user_id %}
+            <button><a href="{{url_for('edit',id=album.album_id)}}">Edit</a></button>
+            <button><a href="{{url_for('delete',id=album.album_id)}}">Delete</a></button>
+            {% endif %}
         </div>
     {% endfor %}
 {% endblock %}
