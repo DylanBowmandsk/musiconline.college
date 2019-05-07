@@ -5,8 +5,11 @@ from flask import render_template, request, redirect, url_for
 from flask_login import login_user, logout_user, current_user, login_required
 
 
-@app.route("/")
+@app.route("/", methods=["GET","POST"])
 def index():
+    if request.method == "POST":
+        albums = Album.query.filter(Album.name.like("%"+request.form["search"] +"%")).all()
+        return render_template("buy.html",albums=albums)
     return render_template("index.html")
 
 @app.route("/register", methods=["GET","POST"])
