@@ -1,17 +1,36 @@
 <form method="POST">
     <div>
-        {{form.name.label}}
-        {{form.name}}
+        {{album_form.name.label}}
+        {{album_form.name(value=album.name)}}
     </div>
     <div>
-        {{form.release.label}}
-        {{form.release}}
+        {{album_form.release.label}}
+        {{album_form.release(value=album.release)}}
     </div>
     <div>
-        {{form.price.label}}
-        {{form.price}}
+        {{album_form.price.label}}
+        {{album_form.price(value=album.price)}}
     </div>
     <div>
-        {{form.button}}
+        {{album_form.button}}
     </div>
+    <div>
+
+    </div>
+</form>
+
+
+{% for track in tracks %}
+<div>
+    {{track.name}}
+    {{track.length}}
+</div>
+{% endfor %}
+<form method="POST">
+    
+    {{track_form.name.label}}
+    {{track_form.name}}
+    {{track_form.length.label}}
+    {{track_form.length}}
+    {{track_form.button}}
 </form>

@@ -27,8 +27,8 @@ class Album(db.Model):
 class Track(db.Model):
     track_id = db.Column(db.Integer, primary_key=True)
     album_id = db.Column(db.Integer, db.ForeignKey("album.album_id"), nullable=False)
-    name = db.Column(db.String(80), unique=True, nullable=False)
-    length = db.Column(db.Integer, nullable=False)
+    name = db.Column(db.String(80), nullable=False)
+    length = db.Column(db.Float, nullable=False)
 
 
 

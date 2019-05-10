@@ -30,3 +30,8 @@ class AdminRecordForm(Form):
     release = IntegerField("Release", validators=[InputRequired()])
     price  = DecimalField("Price", validators=[InputRequired()])
     button = SubmitField("Submit")
+
+class TrackForm(Form):
+    name = StringField("Track Name", validators=[InputRequired()])
+    length = DecimalField("Length", validators=[InputRequired()])
+    button = SubmitField("Submit")

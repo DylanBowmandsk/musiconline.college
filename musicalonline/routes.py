@@ -1,6 +1,6 @@
 from musicalonline import app, db
-from musicalonline.forms import RegisterForm, LoginForm, AdminLoginForm, AdminRecordForm, RecordForm
-from musicalonline.models import User , Album
+from musicalonline.forms import RegisterForm, LoginForm, AdminLoginForm, AdminRecordForm, RecordForm, TrackForm
+from musicalonline.models import User , Album, Track
 from flask import render_template, request, redirect, url_for
 from flask_login import login_user, logout_user, current_user, login_required
 
@@ -45,8 +45,11 @@ def logout():
     print("logged out")
     return redirect(url_for("index"))
 
-@app.route("/buy")
+@app.route("/buy", methods=["GET","POST"])
 def buy():
+    if request.method == "POST":
+        albums = Album.query.filter(Album.name.like("%"+request.form["search"] +"%")).all()
+        return render_template("buy.html",albums=albums)
     albums = Album.query.all()
     return render_template("buy.html", albums=albums)
 
@@ -84,14 +87,24 @@ def admin():
 @app.route("/admin/edit/<int:id>",methods=["GET","POST"])
 @login_required
 def admin_edit(id):
-    form = AdminRecordForm(request.form)
+    album_form = AdminRecordForm()
+    track_form = TrackForm()
+    if "name" in request.form:
+        album_form = AdminRecordForm(request.form)
+    elif "length" in request.form:
+        track_form = TrackForm(request.form)
     album = Album.query.filter_by(album_id=id).first()
-    if form.validate() and album is not None:
-        album.name = form.name.data
-        album.release = form.release.data
-        album.price = form.price.data
+    tracks = album.tracks
+    if album_form.validate() and album is not None:
+        album.name = album_form.name.data
+        album.release = album_form.release.data
+        album.price = album_form.price.data
         db.session.commit()
-    return render_template("admin_edit.html",album=album, form=form)
+    elif  track_form.validate():
+        track = Track(album_id=album.album_id, name=track_form.name.data,length=track_form.length.data)
+        db.session.add(track)
+        db.session.commit()
+    return render_template("admin_edit.html",album=album, album_form=album_form, track_form=track_form,  tracks=tracks)
 
 @app.route("/edit/<int:id>",methods=["GET","POST"])
 @login_required
