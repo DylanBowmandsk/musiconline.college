@@ -1,5 +1,5 @@
 from musicalonline import app, db
-from musicalonline.forms import RegisterForm, LoginForm, AdminLoginForm, AdminRecordForm, RecordForm, TrackForm
+from musicalonline.forms import RegisterForm, LoginForm, AdminLoginForm, RecordForm, RecordForm, TrackForm
 from musicalonline.models import User , Album, Track
 from flask import render_template, request, redirect, url_for
 from flask_login import login_user, logout_user, current_user, login_required
@@ -60,7 +60,23 @@ def sell():
         album = Album(user_id=current_user.id,name=form.name.data,release=form.release.data,price=form.price.data)
         db.session.add(album)
         db.session.commit()
+        return redirect(url_for("buy"))
     return render_template("sell.html", form=form)
+
+@app.route("/admin/add",methods=["GET","POST"])
+@login_required
+def admin_add():
+    if current_user.isadmin == 0:
+        return redirect(url_for('index'))
+    form = RecordForm(request.form)
+    if form.validate():
+        album = Album(user_id=current_user.id,name=form.name.data,release=form.release.data,price=form.price.data)
+        db.session.add(album)
+        db.session.commit()
+        return redirect(url_for("admin"))
+    else:
+        print("invalid")
+    return render_template("admin_add.html",form=form)
 
 @app.route("/adminlogin",methods=["GET","POST"])
 def adminlogin():
@@ -70,10 +86,6 @@ def adminlogin():
         if user is not None and user.isadmin == 1 and user.password == form.password.data:
             login_user(user)
             return redirect(url_for("admin"))
-        else:
-            print("invalid")
-    else:
-        print("invalid")
     return render_template("adminlogin.html",form=form)
 
 @app.route("/admin",methods=["GET"])
@@ -87,21 +99,31 @@ def admin():
 @app.route("/admin/edit/<int:id>",methods=["GET","POST"])
 @login_required
 def admin_edit(id):
-    album_form = AdminRecordForm()
+    if current_user.isadmin == 0:
+        return redirect(url_for("admin"))
+
+    #instantiate forms
+    album_form = RecordForm()
     track_form = TrackForm()
-    if "name" in request.form:
-        album_form = AdminRecordForm(request.form)
-    elif "length" in request.form:
+    if "release" in request.form:
+        print("album form")
+        album_form = RecordForm(request.form)
+    elif "number" in request.form:
+        print("track form")
         track_form = TrackForm(request.form)
+    
+    # generate album and tracks
     album = Album.query.filter_by(album_id=id).first()
     tracks = album.tracks
-    if album_form.validate() and album is not None:
+
+    #filters form validation events
+    if album_form.validate():
         album.name = album_form.name.data
         album.release = album_form.release.data
         album.price = album_form.price.data
         db.session.commit()
     elif  track_form.validate():
-        track = Track(album_id=album.album_id, name=track_form.name.data,length=track_form.length.data)
+        track = Track(album_id=album.album_id,track_number=track_form.number.data, name=track_form.name.data,length=track_form.length.data)
         db.session.add(track)
         db.session.commit()
     return render_template("admin_edit.html",album=album, album_form=album_form, track_form=track_form,  tracks=tracks)
@@ -109,24 +131,35 @@ def admin_edit(id):
 @app.route("/edit/<int:id>",methods=["GET","POST"])
 @login_required
 def edit(id):
+    #instantiate forms
+    album_form = RecordForm()
+    track_form = TrackForm()
+    if "release" in request.form:
+        album_form = RecordForm(request.form)
+    elif "number" in request.form:
+        track_form = TrackForm(request.form)
+
+    #generate album and tracks
     album = Album.query.filter_by(album_id=id).first()
-    if current_user.id == album.user_id:
-        form = RecordForm(request.form)
-        album = Album.query.filter_by(album_id=id).first()
-        if form.validate() and album is not None:
-            album.name = form.name.data
-            album.release = form.release.data
-            album.price = form.price.data
-            db.session.commit() 
-    else:
-        return redirect(url_for("buy"))
-    return render_template("edit.html",form=form)
+    tracks = album.tracks
+
+    #filters form validation events
+    if album_form.validate():
+        album.name = album_form.name.data
+        album.release = album_form.release.data
+        album.price = album_form.price.data
+        db.session.commit()
+    elif  track_form.validate():
+        track = Track(album_id=album.album_id, name=track_form.name.data,length=track_form.length.data,track_number=track_form.number.data)
+        db.session.add(track)
+        db.session.commit()
+    return render_template("edit.html",album=album, album_form=album_form, track_form=track_form, tracks=tracks)
 
 @app.route("/admin/delete/<int:id>")
 @login_required
 def admin_delete(id):
     if current_user.isadmin == 0:
-        return redirect(url_for('index'))
+        return redirect(url_for('admin'))
     Album.query.filter_by(album_id=id).delete()
     db.session.commit()
     return redirect(url_for("admin"))
@@ -135,21 +168,11 @@ def admin_delete(id):
 @login_required
 def delete(id):
     album = Album.query.filter_by(album_id=id).first()
-    if current_user.id == album.user_id:
-        Album.query.filter_by(album_id=id).delete()
-        db.session.commit()
-        redirect(url_for("buy.html"))
-
-@app.route("/admin/add",methods=["GET","POST"])
-@login_required
-def admin_add():
-    if current_user.isadmin == 0:
-        return redirect(url_for('index'))
-    form = AdminRecordForm(request.form)
-    if form.validate():
-        album = Album(user_id=current_user.id,name=form.name.data,release=form.release.data,price=form.price.data)
-        db.session.add(album)
-        db.session.commit()
-    return render_template("admin_add.html",form=form)
+    if  current_user.id != album.user_id:
+        return redirect(url_for("buy"))
+    Album.query.filter_by(album_id=id).delete()
+    db.session.commit()
+    return redirect(url_for("buy"))
+        
 
 

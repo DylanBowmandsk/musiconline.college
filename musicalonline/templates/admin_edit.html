@@ -14,11 +14,7 @@
     <div>
         {{album_form.button}}
     </div>
-    <div>
-
-    </div>
 </form>
-
 
 {% for track in tracks %}
 <div>
@@ -27,7 +23,8 @@
 </div>
 {% endfor %}
 <form method="POST">
-    
+    {{track_form.number.label}}
+    {{track_form.number}}
     {{track_form.name.label}}
     {{track_form.name}}
     {{track_form.length.label}}

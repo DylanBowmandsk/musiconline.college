@@ -25,13 +25,8 @@ class AdminLoginForm(Form):
     password = PasswordField("Password", validators=[InputRequired(), Length(min=6,max=20)])
     button  = SubmitField("Submit")
 
-class AdminRecordForm(Form):
-    name = StringField("Album Name", validators=[InputRequired()])
-    release = IntegerField("Release", validators=[InputRequired()])
-    price  = DecimalField("Price", validators=[InputRequired()])
-    button = SubmitField("Submit")
-
 class TrackForm(Form):
+    number = IntegerField("#",validators=[InputRequired()])
     name = StringField("Track Name", validators=[InputRequired()])
     length = DecimalField("Length", validators=[InputRequired()])
     button = SubmitField("Submit")
