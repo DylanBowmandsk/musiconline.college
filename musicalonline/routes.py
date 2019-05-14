@@ -173,6 +173,29 @@ def delete(id):
     Album.query.filter_by(album_id=id).delete()
     db.session.commit()
     return redirect(url_for("buy"))
+
+@app.route("/admin/delete/track/<int:id>")
+@login_required
+def admin_track_delete(id):
+    track = Track.query.filter_by(track_id=id).first()
+    if current_user.isadmin == 0:
+        return redirect(url_for("admin"))
+    else:
+        Track.query.filter_by(track_id=id).delete()
+        db.session.commit()
+    return redirect(url_for("buy"))
+
+@app.route("/delete/track/<int:id>")
+@login_required
+def track_delete(id):
+    track = Track.query.filter_by(track_id=id).first()
+    if current_user.id != track.album.user_id:
+        return redirect(url_for("admin"))
+    else:
+        Track.query.filter_by(track_id=id).delete()
+        db.session.commit()
+    return redirect(url_for("buy"))
+        
         
 
 

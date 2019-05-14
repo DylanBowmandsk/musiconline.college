@@ -20,6 +20,7 @@
 <div>
     {{track.name}}
     {{track.length}}
+    <button><a href="{{url_for('admin_track_delete',id=track.track_id)}}">Delete</a></button>
 </div>
 {% endfor %}
 <form method="POST">
