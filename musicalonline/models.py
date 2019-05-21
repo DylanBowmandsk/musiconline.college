@@ -22,7 +22,7 @@ class Album(db.Model):
     release = db.Column(db.Integer, nullable=False)
     price = db.Column(db.Float, nullable=False)
     image = db.Column(db.String(200), nullable=True)
-    tracks = db.relationship("Track", backref="album", lazy=True)
+    tracks = db.relationship("Track", backref="album", lazy=True,order_by='Track.track_number.asc()')
 
 class Track(db.Model):
     track_id = db.Column(db.Integer, primary_key=True)

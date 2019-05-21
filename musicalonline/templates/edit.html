@@ -20,6 +20,7 @@
 
 {% for track in tracks %}
 <div>
+    {{track.track_number}}
     {{track.name}}
     {{track.length}}
     <button><a href="{{url_for('track_delete',id=track.track_id)}}">Delete</a></button>

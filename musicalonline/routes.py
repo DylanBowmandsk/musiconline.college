@@ -122,10 +122,12 @@ def admin_edit(id):
         album.release = album_form.release.data
         album.price = album_form.price.data
         db.session.commit()
+        return redirect(url_for("buy"))
     elif  track_form.validate():
         track = Track(album_id=album.album_id,track_number=track_form.number.data, name=track_form.name.data,length=track_form.length.data)
         db.session.add(track)
         db.session.commit()
+        return redirect(url_for("edit",id=id))
     return render_template("admin_edit.html",album=album, album_form=album_form, track_form=track_form,  tracks=tracks)
 
 @app.route("/edit/<int:id>",methods=["GET","POST"])
@@ -149,13 +151,15 @@ def edit(id):
         album.release = album_form.release.data
         album.price = album_form.price.data
         db.session.commit()
+        return redirect(url_for("buy"))
     elif  track_form.validate():
         track = Track(album_id=album.album_id, name=track_form.name.data,length=track_form.length.data,track_number=track_form.number.data)
         db.session.add(track)
         db.session.commit()
+        return redirect(url_for("edit",id=id))
     return render_template("edit.html",album=album, album_form=album_form, track_form=track_form, tracks=tracks)
 
-@app.route("/admin/delete/<int:id>")
+@app.route("/admin/delete/album/<int:id>")
 @login_required
 def admin_delete(id):
     if current_user.isadmin == 0:
@@ -164,7 +168,7 @@ def admin_delete(id):
     db.session.commit()
     return redirect(url_for("admin"))
 
-@app.route("/delete/<int:id>")
+@app.route("/delete/album/<int:id>")
 @login_required
 def delete(id):
     album = Album.query.filter_by(album_id=id).first()
@@ -194,7 +198,7 @@ def track_delete(id):
     else:
         Track.query.filter_by(track_id=id).delete()
         db.session.commit()
-    return redirect(url_for("buy"))
+    return redirect(url_for("edit",id=track.album.album_id))
         
         
 
