@@ -145,7 +145,7 @@ def edit(id):
     album = Album.query.filter_by(album_id=id).first()
     tracks = album.tracks
 
-    if album.user_id == current_user.id:
+    if album.user_id != current_user.id:
         return redirect(url_for("buy"))
     
     #filters form validation events
@@ -176,11 +176,9 @@ def admin_delete(id):
 def delete(id):
     album = Album.query.filter_by(album_id=id).first()
     
-    if album.user_id == current_user.id:
-        return redirect(url_for("buy"))
-
     if  current_user.id != album.user_id:
         return redirect(url_for("buy"))
+
     Album.query.filter_by(album_id=id).delete()
     db.session.commit()
     return redirect(url_for("buy"))
